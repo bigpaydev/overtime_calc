@@ -4,7 +4,7 @@ const rates = {
     "Weekend Daytime": 250,
     "Holiday": 375,
     "Early Take-over": 40,
-    "Civic Day": 187.50
+    // "Civic Day": 187.50
 };
 
 const inputIds = {
@@ -13,13 +13,36 @@ const inputIds = {
     "Weekend Daytime": "weekendDay",
     "Holiday": "holidayDay",
     "Early Take-over": "earlyTakeover",
-    "Civic Day": "civicDay"
+    // "Civic Day": "civicDay"
 };
 
 document.getElementById('overtimeForm').addEventListener('submit', function(e) {
     e.preventDefault();
     calculateAllowance();
 });
+
+function setupRegularNightMirroring() {
+    const regularNightInput = document.getElementById(inputIds["Regular Night"]);
+    const earlyTakeoverInput = document.getElementById(inputIds["Early Take-over"]);
+    let userHasEditedEarlyTakeover = false;
+
+    // Track if user has manually edited early takeover
+    earlyTakeoverInput.addEventListener('input', function() {
+        userHasEditedEarlyTakeover = true;
+    });
+
+    // Mirror regular night value to early takeover
+    regularNightInput.addEventListener('input', function() {
+        if (!userHasEditedEarlyTakeover) {
+            earlyTakeoverInput.value = this.value;
+        }
+    });
+
+    // Reset mirroring when form is reset
+    window.addEventListener('formReset', function() {
+        userHasEditedEarlyTakeover = false;
+    });
+}
 
 function formatCurrency(value) {
     // Always round down (floor) to 2 decimals
@@ -123,7 +146,7 @@ function displayResults(total, breakdown) {
     netTotalDiv.style.borderRadius = '8px';
     netTotalDiv.style.padding = '10px';
     netTotalDiv.innerHTML = `
-        <span><strong>Net Amount (After Tax):</strong></span>
+        <span><strong>Net Amount:</strong></span>
         <span><strong>${formatCurrency(netAmount)}</strong></span>
     `;
     breakdownContainer.appendChild(netTotalDiv);
@@ -138,27 +161,82 @@ function resetCalculator() {
         document.getElementById(id).value = '';
     });
 
+    // Dispatch custom event for mirroring reset
+    window.dispatchEvent(new Event('formReset'));
+
     // Hide result section
     document.getElementById('result').style.display = 'none';
 }
 
-// Add input validation and formatting
-document.querySelectorAll('input[type="number"]').forEach(input => {
-    input.addEventListener('input', function(e) {
-        // Ensure non-negative values
-        if (parseInt(this.value) < 0) {
-            this.value = 0;
-        }
-    });
+function restrictInputToNumbers() {
+    // Get all number input fields
+    const numberInputs = Object.values(inputIds).map(id => document.getElementById(id));
+    
+    numberInputs.forEach(input => {
+        // Prevent non-numeric characters on keypress
+        input.addEventListener('keypress', function(e) {
+            // Allow: backspace, delete, tab, escape, enter
+            if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+                // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                (e.keyCode === 65 && e.ctrlKey === true) ||
+                (e.keyCode === 67 && e.ctrlKey === true) ||
+                (e.keyCode === 86 && e.ctrlKey === true) ||
+                (e.keyCode === 88 && e.ctrlKey === true)) {
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
 
-    // Add enter key support
-    input.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
+        // Remove any non-numeric characters on paste or input
+        input.addEventListener('input', function(e) {
+            // Remove any non-numeric characters
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            // Ensure non-negative values
+            if (parseInt(this.value) < 0) {
+                this.value = '';
+            }
+        });
+
+        // Prevent right-click context menu to avoid paste of non-numeric content
+        input.addEventListener('contextmenu', function(e) {
             e.preventDefault();
-            calculateAllowance();
+        });
+    });
+}
+
+function initializeThemeStorage() {
+    const darkToggle = document.getElementById('darkModeToggle');
+    const lightIcon = document.getElementById('lightIcon');
+    const darkIcon = document.getElementById('darkIcon');
+
+    // Load saved theme preference
+    const savedTheme = localStorage.getItem('overtime-calculator-theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        lightIcon.style.display = 'none';
+        darkIcon.style.display = 'block';
+    }
+
+    // Theme toggle with storage
+    darkToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        
+        // Save theme preference
+        if (document.body.classList.contains('dark-mode')) {
+            localStorage.setItem('overtime-calculator-theme', 'dark');
+            lightIcon.style.display = 'none';
+            darkIcon.style.display = 'block';
+        } else {
+            localStorage.setItem('overtime-calculator-theme', 'light');
+            lightIcon.style.display = 'block';
+            darkIcon.style.display = 'none';
         }
     });
-});
+}
 
 // Register service worker for PWA
 if ("serviceWorker" in navigator) {
@@ -166,3 +244,7 @@ navigator.serviceWorker.register("./sw.js")
     .then(reg => console.log("Service Worker registered:", reg))
     .catch(err => console.error("Service Worker registration failed:", err));
 }
+
+initializeThemeStorage();
+restrictInputToNumbers();
+setupRegularNightMirroring();
