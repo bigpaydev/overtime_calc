@@ -1,0 +1,302 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background: white;
+    min-height: 100vh;
+    padding: 1.25rem; /* instead of 20px */
+}
+
+h1, h2, h3 {
+font-weight: 700; /* bold headings */
+}
+body, label, input {
+font-weight: 400; /* regular body text */
+}
+
+/* Layout */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 1024px;
+    margin: 0 auto;
+    align-items: center;
+    /* justify-content: center; center children */
+    /* flex-wrap: wrap; wrap if too narrow */
+}
+
+/* Calculator & Result Cards */
+.calculator-container, .result {
+    background: linear-gradient(to bottom right, rgba(32, 66, 140, 0.1), rgba(120, 193, 68, 0.1));
+    border: 2px solid #e1e5e9;
+    border-radius: 1rem;
+    padding: 2rem;
+    flex: 1 1 400px; /* flex grow/shrink with min width */
+    max-width: 600px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(32, 66, 140, 0.08);
+}
+
+/* Hover effect (only calculator) */
+.calculator-container:hover {
+    border-color: #20428C;
+    box-shadow: 0 8px 30px rgba(32, 66, 140, 0.12);
+}
+
+/* Titles */
+h1 {
+    text-align: center;
+    color: #20428C;
+    margin-bottom: 1.5rem;
+    font-size: clamp(1.5rem, 2vw + 1rem, 2.5rem);
+    /* font-weight: 600; */
+}
+
+/* Form Inputs */
+.input-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+label {
+    display: flex;              /* make it a flex container */
+    flex-wrap: wrap;            /* allow line break */
+    align-items: baseline;      /* align text nicely */
+    margin-bottom: 0.5rem;
+    color: #20428C;
+    /* font-weight: 500; */
+    font-size: 0.95rem;
+    gap: 0.25rem;               /* small spacing between label text and span */
+}
+
+.rate-info {
+    font-size: 0.85rem;
+    color: #6D6E71;
+    white-space: nowrap;        /* prevent breaking mid-text */
+    flex-shrink: 0;             /* keep it intact when wrapping */
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 0.9rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: #20428C;
+    box-shadow: 0 0 0 3px rgba(32, 66, 140, 0.1);
+}
+
+/* Buttons */
+.calculate-btn {
+    width: 100%;
+    padding: 1.1rem;
+    background: #20428C;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.1rem;
+    /* font-weight: 600; */
+    cursor: pointer;
+    margin-top: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.calculate-btn:hover {
+    background: #1a3675;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(32, 66, 140, 0.3);
+}
+
+.calculate-btn:active {
+    transform: translateY(0);
+}
+
+.reset-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background: #6D6E71;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-top: 1.25rem;
+    transition: background-color 0.3s ease;
+}
+
+.reset-btn:hover {
+    background: #5a5b5e;
+}
+
+/* Results Box */
+.result {
+    border: 2px solid #78c144;
+    padding: 1.8rem;
+    display: none;
+    position: sticky;
+    top: 1.25rem;
+    height: fit-content;
+}
+
+.result h2 {
+    color: #20428C;
+    font-size: 1.2rem;
+    margin-bottom: 0.6rem;
+    text-align: center;
+}
+
+.result .amount {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    /* font-weight: bold; */
+    color: #78c144;
+    margin: 0.6rem 0;
+    text-align: center;
+}
+
+/* Breakdown Section */
+.breakdown {
+    margin-top: 1.2rem;
+    text-align: left;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+}
+
+.breakdown h3 {
+    color: #20428C;
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* allow wrapping on left */
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+    color: #20428C;
+    flex-wrap: wrap; /* let contents wrap on smaller screens */
+}
+
+.breakdown-left {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.desc-text {
+    font-weight: 400;
+}
+
+.desc-detail {
+    color: #6D6E71;
+    white-space: nowrap; /* keeps detail intact but allows wrapping to next line */
+}
+
+.breakdown-right {
+    white-space: nowrap; /* keep amounts tidy */
+    /* font-weight: 600; */
+}
+
+.breakdown-item:last-child {
+    border-bottom: none;
+    /* font-weight: bold; */
+}
+
+
+/* Tablet and above: dual column layout */
+@media (min-width: 768px) {
+    .main-container {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 2rem;
+    }
+    .calculator-container, .result {
+        flex: 1 1 400px;
+        max-width: 600px;
+    }
+    .result {
+        position: sticky;
+        top: 1.25rem;
+    }
+}
+
+/* Mobile refinements */
+@media (max-width: 600px) {
+    .main-container {
+        padding: 0.6rem;
+    }
+    .calculator-container {
+        padding: 1.25rem;
+    }
+    h1 {
+        font-size: clamp(1.2rem, 5vw, 1.7rem);
+    }
+    .result .amount {
+        font-size: clamp(1.5rem, 6vw, 2rem);
+    }
+}
+
+/* Dark Mode Theme */
+body.dark-mode {
+    background: #121212;
+    color: #e1e1e1;
+}
+body.dark-mode .calculator-container,
+body.dark-mode .result {
+    background: #1e1e1e;
+    border-color: #444;
+}
+body.dark-mode input[type="number"] {
+    background: #222;
+    color: #eee;
+    border-color: #555;
+}
+body.dark-mode input[type="number"]:focus {
+    border-color: #78c144;
+    box-shadow: 0 0 0 3px rgba(120, 193, 68, 0.2);
+}
+body.dark-mode .calculate-btn {
+    background: #78c144;
+}
+body.dark-mode .calculate-btn:hover {
+    background: #5fa534;
+}
+
+/* Floating Action Button (FAB) */
+.fab {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: #20428C;
+    color: white;
+    font-size: 1.5rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: background 0.3s ease, transform 0.2s ease;
+    z-index: 999;
+}
+.fab:hover {
+    background: #1a3675;
+    transform: scale(1.05);
+}
