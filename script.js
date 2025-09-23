@@ -16,6 +16,24 @@ const inputIds = {
     // "Civic Day": "civicDay"
 };
 
+const highlightStyle = document.createElement('style');
+highlightStyle.textContent = `
+    @keyframes highlightResults {
+        0% { 
+            transform: scale(1);
+            box-shadow: 0 4px 20px rgba(120, 193, 68, 0.08);
+        }
+        50% { 
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(120, 193, 68, 0.2);
+        }
+        100% { 
+            transform: scale(1);
+            box-shadow: 0 4px 20px rgba(120, 193, 68, 0.08);
+        }
+    }
+`;
+document.head.appendChild(highlightStyle);
 document.getElementById('overtimeForm').addEventListener('submit', function(e) {
     e.preventDefault();
     calculateAllowance();
@@ -26,26 +44,23 @@ function setupRegularNightMirroring() {
     const earlyTakeoverInput = document.getElementById(inputIds["Early Take-over"]);
     let userHasEditedEarlyTakeover = false;
 
-    // Track if user has manually edited early takeover
     earlyTakeoverInput.addEventListener('input', function() {
         userHasEditedEarlyTakeover = true;
     });
 
-    // Mirror regular night value to early takeover
     regularNightInput.addEventListener('input', function() {
         if (!userHasEditedEarlyTakeover) {
             earlyTakeoverInput.value = this.value;
         }
     });
 
-    // Reset mirroring when form is reset
     window.addEventListener('formReset', function() {
         userHasEditedEarlyTakeover = false;
     });
 }
 
 function formatCurrency(value) {
-    // Always round down (floor) to 2 decimals
+    // Always floor to 2 decimals
     const floored = Math.floor(value * 100) / 100;
     return floored.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -55,7 +70,6 @@ function calculateAllowance() {
     let breakdown = [];
     let hasInput = false;
 
-    // Calculate for each category
     for (const [description, rate] of Object.entries(rates)) {
         const inputId = inputIds[description];
         const days = parseInt(document.getElementById(inputId).value) || 0;
@@ -78,17 +92,32 @@ function calculateAllowance() {
         return;
     }
 
-    // Display results
     displayResults(total, breakdown);
 }
 
+function scrollToResults() {
+    const resultSection = document.getElementById('result');
+    const isMobile = window.innerWidth <= 1024;
+    
+    if (isMobile) {
+        // On mobile, smooth scroll to results
+        resultSection.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+        });
+    } else {
+        // On desktop, just ensure results are visible, with a small highlight animation
+        resultSection.style.animation = 'none';
+        resultSection.offsetHeight; // Trigger reflow
+        resultSection.style.animation = 'highlightResults 0.6s ease-out';
+    }
+}
+
 function displayResults(total, breakdown) {
-    // Calculate tax deduction and net amount
     const taxRate = 0.05; // 5% tax
     const taxAmount = total * taxRate;
     const netAmount = total - taxAmount;
-
-    // Update total amount (show net amount)
     document.getElementById('totalAmount').textContent = `${formatCurrency(netAmount)} GH₵`;
 
     // Create breakdown items
@@ -98,8 +127,6 @@ function displayResults(total, breakdown) {
     breakdown.forEach(item => {
         const div = document.createElement('div');
         div.className = 'breakdown-item';
-
-        // Format the display text with inner span
         let displayText = '';
         if (item.description === 'Early Take-over') {
             displayText = `
@@ -120,7 +147,7 @@ function displayResults(total, breakdown) {
         breakdownContainer.appendChild(div);
     });
 
-    // Add subtotal row
+    // subtotal
     const subtotalDiv = document.createElement('div');
     subtotalDiv.className = 'breakdown-item';
     subtotalDiv.innerHTML = `
@@ -129,7 +156,7 @@ function displayResults(total, breakdown) {
     `;
     breakdownContainer.appendChild(subtotalDiv);
 
-    // Add tax deduction row
+    // tax deduction
     const taxDiv = document.createElement('div');
     taxDiv.className = 'breakdown-item';
     taxDiv.style.color = '#e74c3c';
@@ -139,7 +166,7 @@ function displayResults(total, breakdown) {
     `;
     breakdownContainer.appendChild(taxDiv);
 
-    // Add net total row
+    // net total
     const netTotalDiv = document.createElement('div');
     netTotalDiv.className = 'breakdown-item';
     netTotalDiv.style.backgroundColor = 'rgba(120, 193, 68, 0.1)';
@@ -151,27 +178,22 @@ function displayResults(total, breakdown) {
     `;
     breakdownContainer.appendChild(netTotalDiv);
 
-    // Show result section
+    // results
     document.getElementById('result').style.display = 'block';
+    setTimeout(scrollToResults, 100);
 }
 
 function resetCalculator() {
-    // Clear all inputs
     Object.values(inputIds).forEach(id => {
         document.getElementById(id).value = '';
     });
 
-    // Dispatch custom event for mirroring reset
     window.dispatchEvent(new Event('formReset'));
-
-    // Hide result section
     document.getElementById('result').style.display = 'none';
 }
 
 function restrictInputToNumbers() {
-    // Get all number input fields
     const numberInputs = Object.values(inputIds).map(id => document.getElementById(id));
-    
     numberInputs.forEach(input => {
         // Prevent non-numeric characters on keypress
         input.addEventListener('keypress', function(e) {

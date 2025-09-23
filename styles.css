@@ -204,21 +204,19 @@ input[type="number"]:focus {
 
 .desc-detail {
     color: #6D6E71;
-    white-space: nowrap; /* keeps detail intact but allows wrapping to next line */
+    white-space: nowrap; 
 }
 
 .breakdown-right {
-    white-space: nowrap; /* keep amounts tidy */
-    /* font-weight: 600; */
+    white-space: nowrap; 
 }
 
 .breakdown-item:last-child {
     border-bottom: none;
-    /* font-weight: bold; */
 }
 
 
-/* Tablet and above: dual column layout */
+/* Tablet and above layout */
 @media (min-width: 768px) {
     .main-container {
         flex-direction: row;
