@@ -1,10 +1,17 @@
-const rates = {
+const ratesFixed = {
     "Regular Night": 160,
     "Weekend Nighttime": 200,
-    "Weekend Daytime": 250,
-    "Holiday": 375,
+    // "Weekend Daytime": 250,
+    // "Holiday": 375,
     "Early Take-over": 40,
     // "Civic Day": 187.50
+};
+
+const rankRates = {
+    "Trainee":      { weekend: 250, holiday: 375 },
+    "Level 2":      { weekend: 350, holiday: 525 },
+    "Level 3":      { weekend: 400, holiday: 600 },
+    "Supervisor":   { weekend: 450, holiday: 675 }
 };
 
 const inputIds = {
@@ -15,6 +22,37 @@ const inputIds = {
     "Early Take-over": "earlyTakeover",
     // "Civic Day": "civicDay"
 };
+
+function getSelectedRank() {
+    const sel = document.getElementById('rankSelect');
+    return sel ? sel.value : 'Trainee';
+}
+
+function updateDynamicRateLabels() {
+    const rank = getSelectedRank();
+    const weekendRate = rankRates[rank].weekend;
+    const holidayRate = rankRates[rank].holiday;
+    const weekendInfo = document.getElementById('weekendDayRateInfo');
+    const holidayInfo = document.getElementById('holidayDayRateInfo');
+    if (weekendInfo) weekendInfo.textContent = `(varies by rank — ${weekendRate} GH₵ per day for ${rank})`;
+    if (holidayInfo) holidayInfo.textContent = `(varies by rank — ${holidayRate} GH₵ per day for ${rank})`;
+}
+
+// function initializeRankStorage() {
+//     const rankSelect = document.getElementById('rankSelect');
+    
+//     // Load saved rank preference
+//     const savedRank = localStorage.getItem('overtime-calculator-rank');
+//     if (savedRank && rankRates[savedRank]) {
+//         rankSelect.value = savedRank;
+//     }
+
+//     // Save rank selection when changed
+//     rankSelect.addEventListener('change', () => {
+//         localStorage.setItem('overtime-calculator-rank', rankSelect.value);
+//         updateDynamicRateLabels();
+//     });
+// }
 
 document.getElementById('overtimeForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -54,11 +92,12 @@ function calculateAllowance() {
     let total = 0;
     let breakdown = [];
     let hasInput = false;
+    const rank = getSelectedRank();
 
     // Calculate for each category
-    for (const [description, rate] of Object.entries(rates)) {
+    for (const [description, rate] of Object.entries(ratesFixed)) {
         const inputId = inputIds[description];
-        const days = parseInt(document.getElementById(inputId).value) || 0;
+        const days = parseInt(document.getElementById(inputId).value, 10) || 0;
         
         if (days > 0) {
             hasInput = true;
@@ -70,6 +109,32 @@ function calculateAllowance() {
                 rate: rate,
                 subtotal: subtotal
             });
+        }
+    }
+
+    // Weekend Daytime (rank-based)
+    {
+        const inputId = inputIds["Weekend Daytime"];
+        const days = parseInt(document.getElementById(inputId).value, 10) || 0;
+        if (days > 0) {
+            hasInput = true;
+            const rate = rankRates[rank].weekend;
+            const subtotal = days * rate;
+            total += subtotal;
+            breakdown.push({ description: "Weekend Daytime", days, rate, subtotal });
+        }
+    }
+
+    // Holiday (rank-based)
+    {
+        const inputId = inputIds["Holiday"];
+        const days = parseInt(document.getElementById(inputId).value, 10) || 0;
+        if (days > 0) {
+            hasInput = true;
+            const rate = rankRates[rank].holiday;
+            const subtotal = days * rate;
+            total += subtotal;
+            breakdown.push({ description: "Holiday", days, rate, subtotal });
         }
     }
 
@@ -208,24 +273,27 @@ function restrictInputToNumbers() {
     });
 }
 
-function initializeThemeStorage() {
+function initializeStorage() {
     const darkToggle = document.getElementById('darkModeToggle');
     const lightIcon = document.getElementById('lightIcon');
     const darkIcon = document.getElementById('darkIcon');
+    const rankSelect = document.getElementById('rankSelect');
 
-    // Load saved theme preference
+    // Load saved preferences
     const savedTheme = localStorage.getItem('overtime-calculator-theme');
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
         lightIcon.style.display = 'none';
         darkIcon.style.display = 'block';
     }
+    const savedRank = localStorage.getItem('overtime-calculator-rank');
+    if (savedRank && rankRates[savedRank]) {
+        rankSelect.value = savedRank;
+    }    
 
     // Theme toggle with storage
     darkToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
-        
-        // Save theme preference
         if (document.body.classList.contains('dark-mode')) {
             localStorage.setItem('overtime-calculator-theme', 'dark');
             lightIcon.style.display = 'none';
@@ -236,6 +304,19 @@ function initializeThemeStorage() {
             darkIcon.style.display = 'none';
         }
     });
+
+    // Save rank selection when changed
+    rankSelect.addEventListener('change', () => {
+        localStorage.setItem('overtime-calculator-rank', rankSelect.value);
+        updateDynamicRateLabels();
+    });    
+}
+
+// initialize dynamic labels and listen for rank changes
+const rankSelectEl = document.getElementById('rankSelect');
+if (rankSelectEl) {
+    rankSelectEl.addEventListener('change', updateDynamicRateLabels);
+    updateDynamicRateLabels();
 }
 
 // Register service worker for PWA
@@ -245,6 +326,7 @@ navigator.serviceWorker.register("./sw.js")
     .catch(err => console.error("Service Worker registration failed:", err));
 }
 
-initializeThemeStorage();
+initializeStorage();
+// initializeRankStorage();
 restrictInputToNumbers();
 setupRegularNightMirroring();
