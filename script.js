@@ -38,22 +38,6 @@ function updateDynamicRateLabels() {
     if (holidayInfo) holidayInfo.textContent = `(varies by rank — ${holidayRate} GH₵ per day for ${rank})`;
 }
 
-// function initializeRankStorage() {
-//     const rankSelect = document.getElementById('rankSelect');
-    
-//     // Load saved rank preference
-//     const savedRank = localStorage.getItem('overtime-calculator-rank');
-//     if (savedRank && rankRates[savedRank]) {
-//         rankSelect.value = savedRank;
-//     }
-
-//     // Save rank selection when changed
-//     rankSelect.addEventListener('change', () => {
-//         localStorage.setItem('overtime-calculator-rank', rankSelect.value);
-//         updateDynamicRateLabels();
-//     });
-// }
-
 const highlightStyle = document.createElement('style');
 highlightStyle.textContent = `
     @keyframes highlightResults {
@@ -110,7 +94,7 @@ function calculateAllowance() {
     const rank = getSelectedRank();
 
     // Calculate for each category
-    for (const [description, rate] of Object.entries(rates)) {
+    for (const [description, rate] of Object.entries(ratesFixed)) {
         const inputId = inputIds[description];
         const days = parseInt(document.getElementById(inputId).value, 10) || 0;
         
