@@ -64,21 +64,20 @@ h1 {
 }
 
 label {
-    display: flex;              /* make it a flex container */
-    flex-wrap: wrap;            /* allow line break */
-    align-items: baseline;      /* align text nicely */
+    display: flex;        
+    flex-wrap: wrap;      
+    align-items: baseline;
     margin-bottom: 0.5rem;
     color: #20428C;
-    /* font-weight: 500; */
     font-size: 0.95rem;
-    gap: 0.25rem;               /* small spacing between label text and span */
+    gap: 0.25rem; 
 }
 
 .rate-info {
     font-size: 0.85rem;
     color: #6D6E71;
-    white-space: nowrap;        /* prevent breaking mid-text */
-    flex-shrink: 0;             /* keep it intact when wrapping */
+    white-space: nowrap; 
+    flex-shrink: 0;
 }
 
 input[type="number"] {
@@ -136,7 +135,6 @@ body.dark-mode select:focus {
     border: none;
     border-radius: 0.5rem;
     font-size: 1.1rem;
-    /* font-weight: 600; */
     cursor: pointer;
     margin-top: 1.25rem;
     transition: all 0.3s ease;

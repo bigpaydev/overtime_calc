@@ -82,7 +82,6 @@ function setupRegularNightMirroring() {
 }
 
 function formatCurrency(value) {
-    // Always floor to 2 decimals
     const floored = Math.floor(value * 100) / 100;
     return floored.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -111,7 +110,6 @@ function calculateAllowance() {
         }
     }
 
-    // Weekend Daytime (rank-based)
     {
         const inputId = inputIds["Weekend Daytime"];
         const days = parseInt(document.getElementById(inputId).value, 10) || 0;
@@ -124,7 +122,6 @@ function calculateAllowance() {
         }
     }
 
-    // Holiday (rank-based)
     {
         const inputId = inputIds["Holiday"];
         const days = parseInt(document.getElementById(inputId).value, 10) || 0;
@@ -157,7 +154,6 @@ function scrollToResults() {
             inline: 'nearest'
         });
     } else {
-        // On desktop, just ensure results are visible, with a small highlight animation
         resultSection.style.animation = 'none';
         resultSection.offsetHeight; // Trigger reflow
         resultSection.style.animation = 'highlightResults 0.6s ease-out';
@@ -334,6 +330,5 @@ navigator.serviceWorker.register("./sw.js")
 }
 
 initializeStorage();
-// initializeRankStorage();
 restrictInputToNumbers();
 setupRegularNightMirroring();
