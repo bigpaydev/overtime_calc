@@ -24,19 +24,20 @@ const inputIds = {
 };
 
 function getSelectedRank() {
-    const sel = document.getElementById('rankSelect');
-    const rank = sel ? sel.value : 'Trainee';
-    return rankRates[rank] ? rank : 'Trainee';
+    const rankSelect = document.getElementById('rankSelect');
+    return rankSelect ? rankSelect.value : null;
 }
 
 function updateDynamicRateLabels() {
     const rank = getSelectedRank();
-    const weekendRate = rank.weekend;
-    const holidayRate = rank.holiday;
-    const weekendInfo = document.getElementById('weekendDayRateInfo');
-    const holidayInfo = document.getElementById('holidayDayRateInfo');
-    if (weekendInfo) weekendInfo.textContent = `(varies by rank — ${weekendRate} GH₵ per day for ${rank})`;
-    if (holidayInfo) holidayInfo.textContent = `(varies by rank — ${holidayRate} GH₵ per day for ${rank})`;
+    if (rank && rankRates[rank]) {
+        const weekendRate = rankRates[rank].weekend;
+        const holidayRate = rankRates[rank].holiday;
+        const weekendInfo = document.getElementById('weekendDayRateInfo');
+        const holidayInfo = document.getElementById('holidayDayRateInfo');
+        if (weekendInfo) weekendInfo.textContent = `(${weekendRate} GH₵ per day for ${rank})`;
+        if (holidayInfo) holidayInfo.textContent = `(${holidayRate} GH₵ per day for ${rank})`;
+    }
 }
 
 const highlightStyle = document.createElement('style');
@@ -323,6 +324,46 @@ if (rankSelectEl) {
     updateDynamicRateLabels();
 }
 
+const btn = document.querySelector('.info-btn');
+const tooltip = document.getElementById('overtimeTooltip');
+
+if (btn && tooltip) {
+    // Toggle on click (use aria-expanded + css rule to show)
+    btn.addEventListener('click', function (e) {
+        const expanded = this.getAttribute('aria-expanded') === 'true';
+        const newState = String(!expanded);
+        this.setAttribute('aria-expanded', newState);
+        tooltip.setAttribute('aria-hidden', String(expanded)); // inverse of expanded
+    });
+
+    // Keyboard accessibility: show on focus, hide on blur
+    btn.addEventListener('focus', () => {
+        btn.setAttribute('aria-expanded', 'true');
+        tooltip.setAttribute('aria-hidden', 'false');
+    });
+    btn.addEventListener('blur', () => {
+        btn.setAttribute('aria-expanded', 'false');
+        tooltip.setAttribute('aria-hidden', 'true');
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!btn.contains(e.target) && !tooltip.contains(e.target)) {
+            btn.setAttribute('aria-expanded', 'false');
+            tooltip.setAttribute('aria-hidden', 'true');
+        }
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            btn.setAttribute('aria-expanded', 'false');
+            tooltip.setAttribute('aria-hidden', 'true');
+            btn.blur();
+        }
+    });
+}
+
 // Register service worker for PWA
 if ("serviceWorker" in navigator) {
 navigator.serviceWorker.register("./sw.js")
@@ -331,5 +372,6 @@ navigator.serviceWorker.register("./sw.js")
 }
 
 initializeRankAndThemeStorage();
+updateDynamicRateLabels();
 restrictInputToNumbers();
 setupRegularNightMirroring();
