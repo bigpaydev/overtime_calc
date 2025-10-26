@@ -1,4 +1,4 @@
-const CACHE_NAME = "overtime-calculator-v1";
+const CACHE_NAME = "overtime-calculator-v1.1";
 const ASSETS = [
   "./",
   "./favicon.ico",
@@ -9,6 +9,7 @@ const ASSETS = [
 
 // Install event: cache assets
 self.addEventListener("install", (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
@@ -16,6 +17,7 @@ self.addEventListener("install", (event) => {
 
 // Activate event: cleanup old caches
 self.addEventListener("activate", (event) => {
+  self.clients.claim();
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys.map((key) => {
