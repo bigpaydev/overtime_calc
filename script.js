@@ -8,10 +8,10 @@ const ratesFixed = {
 };
 
 const rankRates = {
-    "Trainee":      { weekend: 250, holiday: 375 },
-    "Level 2":      { weekend: 350, holiday: 525 },
-    "Level 3":      { weekend: 400, holiday: 600 },
-    "Supervisor":   { weekend: 450, holiday: 675 }
+    "Trainee": { weekend: 250, holiday: 375 },
+    "Level 2": { weekend: 350, holiday: 525 },
+    "Level 3": { weekend: 400, holiday: 600 },
+    "Supervisor": { weekend: 450, holiday: 675 }
 };
 
 const inputIds = {
@@ -25,13 +25,14 @@ const inputIds = {
 
 function getSelectedRank() {
     const sel = document.getElementById('rankSelect');
-    return sel ? sel.value : 'Trainee';
+    const rank = sel ? sel.value : 'Trainee';
+    return rankRates[rank] ? rank : 'Trainee';
 }
 
 function updateDynamicRateLabels() {
     const rank = getSelectedRank();
-    const weekendRate = rankRates[rank].weekend;
-    const holidayRate = rankRates[rank].holiday;
+    const weekendRate = rank.weekend;
+    const holidayRate = rank.holiday;
     const weekendInfo = document.getElementById('weekendDayRateInfo');
     const holidayInfo = document.getElementById('holidayDayRateInfo');
     if (weekendInfo) weekendInfo.textContent = `(varies by rank — ${weekendRate} GH₵ per day for ${rank})`;
@@ -276,7 +277,7 @@ function restrictInputToNumbers() {
     });
 }
 
-function initializeStorage() {
+function initializeRankAndThemeStorage() {
     const darkToggle = document.getElementById('darkModeToggle');
     const lightIcon = document.getElementById('lightIcon');
     const darkIcon = document.getElementById('darkIcon');
@@ -329,6 +330,6 @@ navigator.serviceWorker.register("./sw.js")
     .catch(err => console.error("Service Worker registration failed:", err));
 }
 
-initializeStorage();
+initializeRankAndThemeStorage();
 restrictInputToNumbers();
 setupRegularNightMirroring();
