@@ -32,13 +32,13 @@ function getSelectedRank() {
 function updateDynamicRateLabels() {
     const rank = getSelectedRank();
     if (rank && rankRates[rank]) {
-        const nightandweekendRate = rankRates[rank].nightAndWeekend;
+        const nightAndWeekendRate = rankRates[rank].nightAndWeekend;
         const holidayRate = rankRates[rank].holiday;
         const nightInfo = document.getElementById('nightRateInfo');
         const weekendInfo = document.getElementById('weekendRateInfo');
         const holidayInfo = document.getElementById('holidayDayRateInfo');
-        if (nightInfo) nightInfo.textContent = `(${nightandweekendRate} GH₵ per day for ${rank})`;
-        if (weekendInfo) weekendInfo.textContent = `(${nightandweekendRate} GH₵ per day for ${rank})`;
+        if (nightInfo) nightInfo.textContent = `(${nightAndWeekendRate} GH₵ per day for ${rank})`;
+        if (weekendInfo) weekendInfo.textContent = `(${nightAndWeekendRate} GH₵ per day for ${rank})`;
         if (holidayInfo) holidayInfo.textContent = `(${holidayRate} GH₵ per day for ${rank})`;
     }
 }
