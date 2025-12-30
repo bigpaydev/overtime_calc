@@ -8,11 +8,11 @@ const ratesFixed = {
 };
 
 const rankRates = {
-    "Trainee": { nightandweekend: 250, holiday: 375 },
-    "Level 2": { nightandweekend: 300, holiday: 450 },
-    "Level 2S": { nightandweekend: 320, holiday: 525 },
-    "Level 3": { nightandweekend: 400, holiday: 600 },
-    "Supervisor": { nightandweekend: 450, holiday: 675 }
+    "Trainee": { nightAndWeekend: 250, holiday: 375 },
+    "Level 2": { nightAndWeekend: 300, holiday: 450 },
+    "Level 2S": { nightAndWeekend: 320, holiday: 525 },
+    "Level 3": { nightAndWeekend: 400, holiday: 600 },
+    "Supervisor": { nightAndWeekend: 450, holiday: 675 }
 };
 
 const inputIds = {
@@ -34,9 +34,11 @@ function updateDynamicRateLabels() {
     if (rank && rankRates[rank]) {
         const nightandweekendRate = rankRates[rank].nightandweekend;
         const holidayRate = rankRates[rank].holiday;
-        const nightAndWeekendInfo = document.getElementById('nightAndWeekendRateInfo');
+        const nightInfo = document.getElementById('nightRateInfo');
+        const weekendInfo = document.getElementById('weekendRateInfo');
         const holidayInfo = document.getElementById('holidayDayRateInfo');
-        if (nightAndWeekendInfo) nightAndWeekendInfo.textContent = `(${nightandweekendRate} GH₵ per day for ${rank})`;
+        if (nightInfo) nightInfo.textContent = `(${nightandweekendRate} GH₵ per day for ${rank})`;
+        if (weekendInfo) weekendInfo.textContent = `(${nightandweekendRate} GH₵ per day for ${rank})`;
         if (holidayInfo) holidayInfo.textContent = `(${holidayRate} GH₵ per day for ${rank})`;
     }
 }
