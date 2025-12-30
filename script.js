@@ -9,7 +9,7 @@ const ratesFixed = {
 
 const rankRates = {
     "Trainee": { weekend: 250, holiday: 375 },
-    "Level 2": { weekend: 300, holiday: 525 },
+    "Level 2": { weekend: 300, holiday: 450 },
     "Level 2S": { weekend: 320, holiday: 525 },
     "Level 3": { weekend: 400, holiday: 600 },
     "Supervisor": { weekend: 450, holiday: 675 }
