@@ -32,7 +32,7 @@ function getSelectedRank() {
 function updateDynamicRateLabels() {
     const rank = getSelectedRank();
     if (rank && rankRates[rank]) {
-        const nightandweekendRate = rankRates[rank].nightandweekend;
+        const nightandweekendRate = rankRates[rank].nightAndWeekend;
         const holidayRate = rankRates[rank].holiday;
         const nightInfo = document.getElementById('nightRateInfo');
         const weekendInfo = document.getElementById('weekendRateInfo');
