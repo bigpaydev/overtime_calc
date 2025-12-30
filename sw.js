@@ -1,4 +1,4 @@
-const CACHE_NAME = "overtime-calculator-v1.4";
+const CACHE_NAME = "overtime-calculator-v1.5";
 const ASSETS = [
   "./",
   "./favicon.ico",

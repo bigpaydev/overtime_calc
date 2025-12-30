@@ -1,6 +1,6 @@
 const ratesFixed = {
-    "Regular Night": 160,
-    "Weekend Nighttime": 200,
+    // "Regular Night": 160,
+    // "Weekend Nighttime": 200,
     // "Weekend Daytime": 250,
     // "Holiday": 375,
     "Early Take-over": 40,
@@ -8,17 +8,17 @@ const ratesFixed = {
 };
 
 const rankRates = {
-    "Trainee": { weekend: 250, holiday: 375 },
-    "Level 2": { weekend: 300, holiday: 450 },
-    "Level 2S": { weekend: 320, holiday: 525 },
-    "Level 3": { weekend: 400, holiday: 600 },
-    "Supervisor": { weekend: 450, holiday: 675 }
+    "Trainee": { nightandweekend: 250, holiday: 375 },
+    "Level 2": { nightandweekend: 300, holiday: 450 },
+    "Level 2S": { nightandweekend: 320, holiday: 525 },
+    "Level 3": { nightandweekend: 400, holiday: 600 },
+    "Supervisor": { nightandweekend: 450, holiday: 675 }
 };
 
 const inputIds = {
-    "Regular Night": "regularNight",
-    "Weekend Nighttime": "weekendNight",
-    "Weekend Daytime": "weekendDay",
+    "Night Shift": "regularNight",
+    // "Weekend Nighttime": "weekendNight",
+    "Weekend Shift": "weekend",
     "Holiday": "holidayDay",
     "Early Take-over": "earlyTakeover",
     // "Civic Day": "civicDay"
@@ -32,11 +32,11 @@ function getSelectedRank() {
 function updateDynamicRateLabels() {
     const rank = getSelectedRank();
     if (rank && rankRates[rank]) {
-        const weekendRate = rankRates[rank].weekend;
+        const nightandweekendRate = rankRates[rank].nightandweekend;
         const holidayRate = rankRates[rank].holiday;
-        const weekendInfo = document.getElementById('weekendDayRateInfo');
+        const nightAndWeekendInfo = document.getElementById('nightAndWeekendRateInfo');
         const holidayInfo = document.getElementById('holidayDayRateInfo');
-        if (weekendInfo) weekendInfo.textContent = `(${weekendRate} GH₵ per day for ${rank})`;
+        if (nightAndWeekendInfo) nightAndWeekendInfo.textContent = `(${nightandweekendRate} GH₵ per day for ${rank})`;
         if (holidayInfo) holidayInfo.textContent = `(${holidayRate} GH₵ per day for ${rank})`;
     }
 }
@@ -65,7 +65,7 @@ document.getElementById('overtimeForm').addEventListener('submit', function(e) {
 });
 
 function setupRegularNightMirroring() {
-    const regularNightInput = document.getElementById(inputIds["Regular Night"]);
+    const regularNightInput = document.getElementById(inputIds["Night Shift"]);
     const earlyTakeoverInput = document.getElementById(inputIds["Early Take-over"]);
     let userHasEditedEarlyTakeover = false;
 
@@ -96,32 +96,44 @@ function calculateAllowance() {
     const rank = getSelectedRank();
 
     // Calculate for each category
-    for (const [description, rate] of Object.entries(ratesFixed)) {
-        const inputId = inputIds[description];
-        const days = parseInt(document.getElementById(inputId).value, 10) || 0;
+    // for (const [description, rate] of Object.entries(ratesFixed)) {
+    //     const inputId = inputIds[description];
+    //     const days = parseInt(document.getElementById(inputId).value, 10) || 0;
         
+    //     if (days > 0) {
+    //         hasInput = true;
+    //         const subtotal = days * rate;
+    //         total += subtotal;
+    //         breakdown.push({
+    //             description: description,
+    //             days: days,
+    //             rate: rate,
+    //             subtotal: subtotal
+    //         });
+    //     }
+    // }
+
+    {
+        const inputId = inputIds["Night Shift"];
+        const days = parseInt(document.getElementById(inputId).value, 10) || 0;
         if (days > 0) {
             hasInput = true;
+            const rate = rankRates[rank].nightAndWeekend;
             const subtotal = days * rate;
             total += subtotal;
-            breakdown.push({
-                description: description,
-                days: days,
-                rate: rate,
-                subtotal: subtotal
-            });
+            breakdown.push({ description: "Night Shift", days, rate, subtotal });
         }
     }
 
     {
-        const inputId = inputIds["Weekend Daytime"];
+        const inputId = inputIds["Weekend Shift"];
         const days = parseInt(document.getElementById(inputId).value, 10) || 0;
         if (days > 0) {
             hasInput = true;
-            const rate = rankRates[rank].weekend;
+            const rate = rankRates[rank].nightAndWeekend;
             const subtotal = days * rate;
             total += subtotal;
-            breakdown.push({ description: "Weekend Daytime", days, rate, subtotal });
+            breakdown.push({ description: "Weekend Shift", days, rate, subtotal });
         }
     }
 
