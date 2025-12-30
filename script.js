@@ -1,11 +1,11 @@
-const ratesFixed = {
-    // "Regular Night": 160,
-    // "Weekend Nighttime": 200,
-    // "Weekend Daytime": 250,
-    // "Holiday": 375,
-    "Early Take-over": 40,
-    // "Civic Day": 187.50
-};
+// const ratesFixed = {
+//     "Regular Night": 160,
+//     "Weekend Nighttime": 200,
+//     "Weekend Daytime": 250,
+//     "Holiday": 375,
+//     "Early Take-over": 40,
+//     "Civic Day": 187.50
+// };
 
 const rankRates = {
     "Trainee": { nightAndWeekend: 250, holiday: 375 },
@@ -148,6 +148,18 @@ function calculateAllowance() {
             const subtotal = days * rate;
             total += subtotal;
             breakdown.push({ description: "Holiday", days, rate, subtotal });
+        }
+    }
+
+    {
+        const inputId = inputIds["Early Take-over"];
+        const days = parseInt(document.getElementById(inputId).value, 10) || 0;
+        if (days > 0) {
+            hasInput = true;
+            const rate = 40;
+            const subtotal = days * rate;
+            total += subtotal;
+            breakdown.push({ description: "Early Take-over", days, rate, subtotal });
         }
     }
 
